@@ -1,0 +1,86 @@
+{
+  "name": "shortcut-viewer",
+  "displayName": "shortcut_viewer",
+  "description": "Visualize your Shortcut tasks on VSCode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "shortcut-viewer.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "shortcut-viewer.reloadShortcutTasks",
+        "title": "Reload Shortcut Tasks",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "shortcut-viewer",
+          "title": "Shortcut Viewer",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "shortcut-viewer": [
+        {
+          "id": "shortcut-tasks",
+          "name": "Shortcut Tasks",
+          "icon": "media/icon.png",
+          "contextualTitle": "Shortcut Viewer",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "shortcut-viewer.reloadShortcutTasks",
+          "when": "view == shortcut-tasks",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "esbuild": "^0.24.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.7.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
