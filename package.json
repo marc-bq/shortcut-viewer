@@ -24,6 +24,14 @@
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
         }
+      },
+      {
+        "command": "shortcut-viewer.openStory",
+        "title": "Open Story",
+        "icon": {
+          "light": "resources/light/eye.svg",
+          "dark": "resources/dark/eye.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -53,6 +61,13 @@
           "when": "view == shortcut-tasks",
           "group": "navigation"
         }
+      ],
+      "view/item/context": [
+        {
+          "command": "shortcut-viewer.openStory",
+          "when": "view == shortcut-tasks",
+          "group": "inline"
+        }
       ]
     },
     "configuration": {
@@ -63,6 +78,11 @@
           "type": "string",
           "default": "",
           "description": "The token used for authentication"
+        },
+        "shortcutViewer.workspaceid": {
+          "type": "integer",
+          "default": "",
+          "description": "The workspace ID"
         }
       }
     }
@@ -78,7 +98,7 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "check-types": "tsc --noEmit",
-    "lint": "eslint src",
+    "lint": "eslint --fix src",
     "test": "vscode-test"
   },
   "devDependencies": {
@@ -91,7 +111,10 @@
     "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.24.0",
     "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {

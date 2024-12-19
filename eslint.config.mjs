@@ -6,6 +6,7 @@ export default [{
 }, {
     plugins: {
         "@typescript-eslint": typescriptEslint,
+        "prettier": "eslint-plugin-prettier",
     },
 
     languageOptions: {
@@ -19,10 +20,10 @@ export default [{
             selector: "import",
             format: ["camelCase", "PascalCase"],
         }],
-
         curly: "warn",
         eqeqeq: "warn",
         "no-throw-literal": "warn",
         semi: "warn",
+        "prettier/prettier": "warn",
     },
 }];

@@ -13,9 +13,18 @@ export function activate(context: vscode.ExtensionContext) {
 	  : undefined;
 
   const token:string = vscode.workspace.getConfiguration('shortcutViewer').get('token')||'';
-  console.log('Token:', token);
+  const workspaceId:number|undefined = vscode.workspace.getConfiguration('shortcutViewer').get('workspaceid');
 
-  const tasksProvider = new TasksProvider(token);
+  console.log('Token:', token);
+  if(!token ) {
+	vscode.window.showErrorMessage('Please provide a valid token');
+	return;
+}	
+	if(!workspaceId) {
+		vscode.window.showErrorMessage('Please provide a valid workspace id');
+		return;
+	}
+  const tasksProvider = new TasksProvider(token,workspaceId);
   vscode.window.registerTreeDataProvider('shortcut-tasks', tasksProvider);
 
 	console.log('Congratulations, your extension "shortcut-viewer" is now active!');
@@ -23,11 +32,11 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from Shortcut viewer!');
 	});
 	
-	const reload = vscode.commands.registerCommand('shortcut-viewer.reloadShortcutTasks', () => {
-		// vscode.window.showInformationMessage('Reload hola ke ase!');
-		tasksProvider.refresh();
-
+	const reload = vscode.commands.registerCommand('shortcut-viewer.reloadShortcutTasks', () => tasksProvider.refresh());
+	vscode.commands.registerCommand('shortcut-viewer.openStory', (task) => {
+		vscode.env.openExternal(vscode.Uri.parse(task.url));
 	});
+
 	context.subscriptions.push(disposable);
 }
 
