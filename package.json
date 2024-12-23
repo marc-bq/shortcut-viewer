@@ -43,7 +43,7 @@
       },
       {
         "command": "shortcut-viewer.commitStory",
-        "title": "Commit Story",
+        "title": "Commit Story and Close",
         "icon": {
           "light": "resources/light/commit.svg",
           "dark": "resources/dark/commit.svg"
@@ -85,13 +85,13 @@
           "group": "inline"
         },
         {
-          "command": "shortcut-viewer.commitStory",
-          "when": "view == shortcut-tasks && viewItem == STORY"
-        },
-        {
           "command": "shortcut-viewer.copyGitMessage",
           "when": "view == shortcut-tasks && viewItem == STORY",
           "group": "inline"
+        },
+        {
+          "command": "shortcut-viewer.commitStory",
+          "when": "view == shortcut-tasks && viewItem == STORY"
         }
       ]
     },
@@ -103,6 +103,11 @@
           "type": "string",
           "default": "",
           "description": "The token used for authentication"
+        },
+        "shortcutViewer.closedStage": {
+          "type": "integer",
+          "default": "",
+          "description": "The stage ID for closed stories"
         },
         "shortcutViewer.workspaceid": {
           "type": "integer",
