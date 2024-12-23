@@ -42,6 +42,7 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
   private _stories: StorySlim[]= [];
   private _onDidChangeTreeData: vscode.EventEmitter<any | undefined | null | void> = new vscode.EventEmitter<any | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> = this._onDidChangeTreeData.event;
+  private _initialized: Promise<void>;
 
   refresh(): void {
     this._onDidChangeTreeData.fire(undefined);
@@ -50,7 +51,7 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
 
     this._shortcut = new ShortcutClient(token);
     this._workspaceId = workspaceId;
-    this.initialize();
+    this._initialized = this.initialize();
   }
  private async searchStories(query:string) {
     let result = await this._shortcut.searchStories({query, page_size: 25});
@@ -67,10 +68,11 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
     this._startedIteration = (await this._shortcut.listIterations()).data.find((iteration) => iteration.status === 'started')?.id;
     this._stories = (await this._shortcut.listIterationStories(this._startedIteration,{includes_description: true})).data;
   }
-  getTreeItem(element: any): vscode.TreeItem | Thenable<vscode.TreeItem> {
+  getTreeItem(element: StoryNode):StoryNode {
     return element;
   }
-  getChildren(element?: any): vscode.ProviderResult<any[]> {
+  async getChildren(element?: WorkflowNode): Promise<StoryNode[]|WorkflowNode[]> {
+    await this._initialized;
     if(element) {
       return this._stories
         .filter(story=>story.workflow_state_id===element.stateId)
@@ -91,22 +93,25 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
           }else{
             color = 'charts.yellow';
           }
-          const severity = story.custom_fields?.find((field) => field.value.includes("Severity"));
-          return {
-            label: story.name,
-            collapsibleState: vscode.TreeItemCollapsibleState.None,
-            iconPath: new vscode.ThemeIcon(icon, new vscode.ThemeColor(color)),
-            tooltip: severity?.value ? `(${severity?.value}) ${story.description}`: story.description,
-            description: severity?.value || story.description,
-            url: story.app_url,
-          };
+          const severity = story.custom_fields?.find((field) => field.value.includes("Severity"),{
+            command: 'shortcut-viewer.openStory',
+            title: 'Open Story',
+            arguments: [story]
+          });
+          const storyNode = new StoryNode(story.name, vscode.TreeItemCollapsibleState.None);
+          storyNode.iconPath = new vscode.ThemeIcon(icon, new vscode.ThemeColor(color));
+          storyNode.tooltip = severity?.value ? `(${severity?.value}) ${story.description}`: story.description;
+          storyNode.description = severity?.value || story.description;
+          storyNode.url = story.app_url;
+          storyNode.shortcutTask = story;
+          return storyNode;
         });
       // return this.searchStories(`state:${element.stateId} and owner:${this._user}`).then((stories) => {
       //   return stories
       // });
     }
       else{
-        return  this._shortcut.getWorkflow(this._workspaceId).then((workflow) => {
+        return this._shortcut.getWorkflow(this._workspaceId).then((workflow) => {
          return workflow.data.states.map((state) => {
           let color =  'charts.yellow';
           if(state.type === 'done'){
@@ -114,18 +119,39 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
           }else if(state.type === 'unstarted'){
             color = 'charts.gray';
           }
-           return {
-             label: state.name,
-             collapsibleState: 1,
-             iconPath: new vscode.ThemeIcon('close-dirty', new vscode.ThemeColor(color)),
-             tooltip: state.description,
-             description: state.description,
-             stateId: state.id,
-           };
+          const workflowNode = new WorkflowNode(state.name, vscode.TreeItemCollapsibleState.Expanded, state.id);
+          workflowNode.iconPath = new vscode.ThemeIcon('close-dirty', new vscode.ThemeColor(color)); 
+          workflowNode.tooltip = state.description;
+          return  workflowNode;
          });
        });
       }
   }
 
 
+}
+class StoryNode extends vscode.TreeItem {
+  public url!: string;
+  public shortcutTask!: StorySlim;
+
+  constructor(
+    public readonly label: string,
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly command?: vscode.Command,
+    public readonly contextValue?: string
+  ) {
+    super(label, collapsibleState);
+    this.contextValue = 'STORY';
+  }
+}
+
+class WorkflowNode extends vscode.TreeItem {  
+  constructor(
+    public readonly label: string,
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly stateId?: number,
+    public readonly command?: vscode.Command
+  ) {
+    super(label, collapsibleState);
+  }
 }

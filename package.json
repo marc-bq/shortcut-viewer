@@ -32,6 +32,22 @@
           "light": "resources/light/eye.svg",
           "dark": "resources/dark/eye.svg"
         }
+      },
+      {
+        "command": "shortcut-viewer.copyGitMessage",
+        "title": "Copy Git Message",
+        "icon": {
+          "light": "resources/light/git.svg",
+          "dark": "resources/dark/git.svg"
+        }
+      },
+      {
+        "command": "shortcut-viewer.commitStory",
+        "title": "Commit Story",
+        "icon": {
+          "light": "resources/light/commit.svg",
+          "dark": "resources/dark/commit.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -65,7 +81,16 @@
       "view/item/context": [
         {
           "command": "shortcut-viewer.openStory",
-          "when": "view == shortcut-tasks",
+          "when": "view == shortcut-tasks && viewItem == STORY",
+          "group": "inline"
+        },
+        {
+          "command": "shortcut-viewer.commitStory",
+          "when": "view == shortcut-tasks && viewItem == STORY"
+        },
+        {
+          "command": "shortcut-viewer.copyGitMessage",
+          "when": "view == shortcut-tasks && viewItem == STORY",
           "group": "inline"
         }
       ]

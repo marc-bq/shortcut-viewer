@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import {  TasksProvider } from './providers';
 import { todo } from 'node:test';
+import { commitStory, copyGitMessage } from './commands';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -36,6 +37,9 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('shortcut-viewer.openStory', (task) => {
 		vscode.env.openExternal(vscode.Uri.parse(task.url));
 	});
+
+	vscode.commands.registerCommand('shortcut-viewer.commitStory',commitStory);
+	vscode.commands.registerCommand('shortcut-viewer.copyGitMessage',copyGitMessage);
 
 	context.subscriptions.push(disposable);
 }
