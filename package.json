@@ -12,10 +12,16 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "shortcut-tasks",
+        "contents": "No tasks found. Please check your configuration. \n[Go to Settings](command:shortcut-viewer.goToSettings)"
+      }
+    ],
     "commands": [
       {
-        "command": "shortcut-viewer.helloWorld",
-        "title": "Hello World"
+        "command": "shortcut-viewer.goToSettings",
+        "title": "Go to Settings"
       },
       {
         "command": "shortcut-viewer.reloadShortcutTasks",
@@ -100,16 +106,21 @@
       "title": "Shortcut Viewer",
       "properties": {
         "shortcutViewer.token": {
+          "order": 0,
           "type": "string",
           "default": "",
-          "description": "The token used for authentication"
+          "description": "The token used for authentication",
+          "pattern": ".+",
+          "patternErrorMessage": "Token cannot be empty"
         },
         "shortcutViewer.closedStage": {
+          "order": 2,
           "type": "integer",
           "default": "",
           "description": "The stage ID for closed stories"
         },
         "shortcutViewer.workspaceid": {
+          "order": 1,
           "type": "integer",
           "default": "",
           "description": "The workspace ID"

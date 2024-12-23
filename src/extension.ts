@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import {  TasksProvider } from './providers';
 import { todo } from 'node:test';
-import { commitStory, copyGitMessage } from './commands';
+import { commitStory, copyGitMessage, goToSettings } from './commands';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -17,14 +17,14 @@ export function activate(context: vscode.ExtensionContext) {
   const workspaceId:number|undefined = vscode.workspace.getConfiguration('shortcutViewer').get('workspaceid');
 
   console.log('Token:', token);
-  if(!token ) {
-	vscode.window.showErrorMessage('Please provide a valid token');
-	return;
-}	
-	if(!workspaceId) {
-		vscode.window.showErrorMessage('Please provide a valid workspace id');
-		return;
-	}
+//   if(!token ) {
+// 	vscode.window.showErrorMessage('Please provide a valid token');
+// 	return;
+// 	}	
+// 	if(!workspaceId) {
+// 		vscode.window.showErrorMessage('Please provide a valid workspace id');
+// 		return;
+// 	}
   const tasksProvider = new TasksProvider(token,workspaceId);
   vscode.window.registerTreeDataProvider('shortcut-tasks', tasksProvider);
 
@@ -33,13 +33,14 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from Shortcut viewer!');
 	});
 	
-	const reload = vscode.commands.registerCommand('shortcut-viewer.reloadShortcutTasks', () => tasksProvider.refresh());
+	vscode.commands.registerCommand('shortcut-viewer.reloadShortcutTasks', () => tasksProvider.refresh());
 	vscode.commands.registerCommand('shortcut-viewer.openStory', (task) => {
 		vscode.env.openExternal(vscode.Uri.parse(task.url));
 	});
-
 	vscode.commands.registerCommand('shortcut-viewer.commitStory',commitStory);
 	vscode.commands.registerCommand('shortcut-viewer.copyGitMessage',copyGitMessage);
+	vscode.commands.registerCommand('shortcut-viewer.goToSettings',goToSettings);
+
 
 	context.subscriptions.push(disposable);
 }

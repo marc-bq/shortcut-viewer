@@ -40,6 +40,7 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
   private _workspaceId: number;
   private _startedIteration: any;
   private _stories: StorySlim[]= [];
+  private _token: string;
   private _onDidChangeTreeData: vscode.EventEmitter<any | undefined | null | void> = new vscode.EventEmitter<any | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> = this._onDidChangeTreeData.event;
   private _initialized: Promise<void>;
@@ -47,8 +48,8 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
   refresh(): void {
     this._onDidChangeTreeData.fire(undefined);
   }
-   constructor(token:string, workspaceId:number) {
-
+   constructor(token:string="", workspaceId=0) {
+    this._token = token;
     this._shortcut = new ShortcutClient(token);
     this._workspaceId = workspaceId;
     this._initialized = this.initialize();
@@ -72,6 +73,8 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
     return element;
   }
   async getChildren(element?: WorkflowNode): Promise<StoryNode[]|WorkflowNode[]> {
+    if(!this._token || !this._workspaceId) 
+      return [];
     await this._initialized;
     if(element) {
       return this._stories
