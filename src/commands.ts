@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import * as vscode from 'vscode';
 
 export const commitStory = (task:any) => {
-    const commitMessage = task.label;
+    const commitMessage =  `[sc-${task.id}] [${task.story_type}] ${task.name}`;
     const options = { cwd: vscode.workspace.workspaceFolders? vscode.workspace.workspaceFolders[0].uri.path:undefined };
     const packageJson = require(`${options.cwd}/package.json`);
     const token:string = vscode.workspace.getConfiguration('shortcutViewer').get('token')||'';
