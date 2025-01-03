@@ -1,6 +1,6 @@
 {
   "name": "shortcut-viewer",
-  "displayName": "shortcut_viewer",
+  "displayName": "Shortcut Viewer",
   "description": "Visualize your Shortcut tasks on VSCode",
   "version": "0.0.1",
   "engines": {
@@ -143,6 +143,7 @@
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
+    "publish":"pnpm vsce publish --no-dependencies",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
