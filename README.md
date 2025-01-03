@@ -2,6 +2,8 @@
 
 Shortcut Viewer is a tool designed to view your shortcut stories and create a commit using the story name
 
+![Screenshot](media/screenshot.gif)
+
 ## Features
 
 - View your workflow
