@@ -45,7 +45,8 @@ export const commitStory = (task: any) => {
           await shortcurClient.updateStory(task.shortcutTask.id, {
             labels: [{ name: `${name}-${version}`, color: '#FC5000' }],
           });
-
+          // Refresh the tree view
+          vscode.commands.executeCommand('shortcut-viewer.reloadShortcutTasks');
           // shortcurClient.listLabels({slim:true}).then((result) => {
           //     const label = result.data.find((label:any) => label.name === `${name}-${version}`);
           //     if(!label) {

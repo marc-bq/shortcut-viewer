@@ -44,6 +44,7 @@ export class TasksProvider implements vscode.TreeDataProvider<any> {
   private _initialized: Promise<void>;
 
   refresh(): void {
+    this._initialized = this.initialize();
     this._onDidChangeTreeData.fire(undefined);
   }
   constructor(token: string = '', workspaceId = 0) {
