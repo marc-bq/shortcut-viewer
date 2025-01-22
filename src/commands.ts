@@ -3,7 +3,8 @@ import { exec } from 'child_process';
 import * as vscode from 'vscode';
 
 export const commitStory = (task: any) => {
-  const commitMessage = `[sc-${task.shortcutTask.id}] [${task.shortcutTask.story_type}] ${task.shortcutTask.name}`;
+  let commitMessage = `[sc-${task.shortcutTask.id}] [${task.shortcutTask.story_type}] ${task.shortcutTask.name}`;
+  commitMessage = commitMessage.replace(/"/g, '\\"');
   const options = {
     cwd: vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.path : undefined,
   };
