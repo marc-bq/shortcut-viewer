@@ -2,7 +2,7 @@
   "name": "shortcut-viewer",
   "displayName": "Shortcut Viewer",
   "description": "Visualize your Shortcut tasks on VSCode",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "engines": {
     "vscode": "^1.96.0"
   },

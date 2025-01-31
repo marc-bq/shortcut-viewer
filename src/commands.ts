@@ -45,7 +45,7 @@ export const commitStory = (task: any) => {
           const name = packageJson[packageField];
           // await shortcurClient.createStoryComment(task.shortcutTask.id, {text: `Committed: ${commitUrl}`})
           const story = await shortcurClient.getStory(task.shortcutTask.id);
-          let labels = (story.data.labels || []).concat([{ name: `${name}-${version}`, color: '#FC5000', description: '' } as LabelSlim]);
+          let labels = (story.data.labels || []).concat([{ name: `${name}-${version}`, description: '' } as LabelSlim]);
 
           const createLabels = labels.map((label) => {
             return { name: label.name, color: label.color, description: label.description ?? undefined } as CreateLabelParams;
