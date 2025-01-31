@@ -1,4 +1,4 @@
-import ShortcutClient, { StorySlim } from '@shortcut/client';
+import ShortcutClient, { CreateLabelParams, LabelSlim, StorySlim } from '@shortcut/client';
 import { exec } from 'child_process';
 import * as vscode from 'vscode';
 
@@ -44,9 +44,20 @@ export const commitStory = (task: any) => {
           const version = packageJson.version;
           const name = packageJson[packageField];
           // await shortcurClient.createStoryComment(task.shortcutTask.id, {text: `Committed: ${commitUrl}`})
-          await shortcurClient.updateStory(task.shortcutTask.id, {
-            labels: [{ name: `${name}-${version}`, color: '#FC5000' }],
+          const story = await shortcurClient.getStory(task.shortcutTask.id);
+          let labels = (story.data.labels || []).concat([{ name: `${name}-${version}`, color: '#FC5000', description: '' } as LabelSlim]);
+
+          const createLabels = labels.map((label) => {
+            return { name: label.name, color: label.color, description: label.description ?? undefined } as CreateLabelParams;
           });
+
+          try {
+            await shortcurClient.updateStory(task.shortcutTask.id, {
+              labels: createLabels,
+            });
+          } catch (error) {
+            console.error('Error updating story:', error);
+          }
           // Refresh the tree view
           vscode.commands.executeCommand('shortcut-viewer.reloadShortcutTasks');
           // shortcurClient.listLabels({slim:true}).then((result) => {
