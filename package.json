@@ -137,6 +137,13 @@
           "type": "integer",
           "default": "",
           "description": "The workspace ID"
+        },
+        "shortcutViewer.labelName": {
+          "order": 3,
+          "type": "string",
+          "default": "",
+          "description": "The property name in package.json that holds the project name for generating shortcut labels",
+          "title": "package.json field for name"
         }
       }
     }

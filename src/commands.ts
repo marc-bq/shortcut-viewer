@@ -40,8 +40,9 @@ export const commitStory = (task: any) => {
           await shortcurClient.updateStory(task.shortcutTask.id, {
             workflow_state_id: closedState,
           });
+          const packageField: string = vscode.workspace.getConfiguration('shortcutViewer').get('labelName') || 'name';
           const version = packageJson.version;
-          const name = packageJson.name;
+          const name = packageJson[packageField];
           // await shortcurClient.createStoryComment(task.shortcutTask.id, {text: `Committed: ${commitUrl}`})
           await shortcurClient.updateStory(task.shortcutTask.id, {
             labels: [{ name: `${name}-${version}`, color: '#FC5000' }],
