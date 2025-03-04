@@ -3,7 +3,8 @@
 import * as vscode from 'vscode';
 import { TasksProvider } from './providers';
 import { todo } from 'node:test';
-import { commitStory, copyGitMessage, goToSettings } from './commands';
+import { closeStory, commitStory, copyGitMessage, goToSettings } from './commands';
+import { close } from 'fs';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -37,6 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand('shortcut-viewer.commitStory', commitStory);
   vscode.commands.registerCommand('shortcut-viewer.copyGitMessage', copyGitMessage);
   vscode.commands.registerCommand('shortcut-viewer.goToSettings', goToSettings);
+  vscode.commands.registerCommand('shortcut-viewer.closeStory', closeStory);
 
   context.subscriptions.push(disposable);
 }

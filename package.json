@@ -2,7 +2,7 @@
   "name": "shortcut-viewer",
   "displayName": "Shortcut Viewer",
   "description": "Visualize your Shortcut tasks on VSCode",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -67,6 +67,14 @@
           "light": "resources/light/commit.svg",
           "dark": "resources/dark/commit.svg"
         }
+      },
+      {
+        "command": "shortcut-viewer.closeStory",
+        "title": "Close Story",
+        "icon": {
+          "light": "resources/light/done.svg",
+          "dark": "resources/dark/done.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -110,6 +118,10 @@
         },
         {
           "command": "shortcut-viewer.commitStory",
+          "when": "view == shortcut-tasks && viewItem == STORY"
+        },
+        {
+          "command": "shortcut-viewer.closeStory",
           "when": "view == shortcut-tasks && viewItem == STORY"
         }
       ]

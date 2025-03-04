@@ -8,9 +8,7 @@ export const commitStory = (task: any) => {
   const options = {
     cwd: vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.path : undefined,
   };
-  const packageJson = require(`${options.cwd}/package.json`);
-  const token: string = vscode.workspace.getConfiguration('shortcutViewer').get('token') || '';
-  const closedState: number | undefined = vscode.workspace.getConfiguration('shortcutViewer').get('closedStage');
+
   exec('git status --porcelain', options, (statusError, statusStdout, statusStderr) => {
     if (statusError) {
       vscode.window.showErrorMessage(`Git status failed: ${statusStderr}`);
@@ -35,37 +33,7 @@ export const commitStory = (task: any) => {
         vscode.window.showInformationMessage(`Committed: ${commitMessage}`);
         // Store the commit URL in a variable or use it as needed
         console.log('Commit URL:', commitUrl);
-        if (closedState && token) {
-          const shortcurClient = new ShortcutClient(token);
-          await shortcurClient.updateStory(task.shortcutTask.id, {
-            workflow_state_id: closedState,
-          });
-          const packageField: string = vscode.workspace.getConfiguration('shortcutViewer').get('labelName') || 'name';
-          const version = packageJson.version;
-          const name = packageJson[packageField];
-          // await shortcurClient.createStoryComment(task.shortcutTask.id, {text: `Committed: ${commitUrl}`})
-          const story = await shortcurClient.getStory(task.shortcutTask.id);
-          let labels = (story.data.labels || []).concat([{ name: `${name}-${version}`, description: '' } as LabelSlim]);
-
-          const createLabels = labels.map((label) => {
-            return { name: label.name, color: label.color, description: label.description ?? undefined } as CreateLabelParams;
-          });
-
-          try {
-            await shortcurClient.updateStory(task.shortcutTask.id, {
-              labels: createLabels,
-            });
-          } catch (error) {
-            console.error('Error updating story:', error);
-          }
-          // Refresh the tree view
-          vscode.commands.executeCommand('shortcut-viewer.reloadShortcutTasks');
-          // shortcurClient.listLabels({slim:true}).then((result) => {
-          //     const label = result.data.find((label:any) => label.name === `${name}-${version}`);
-          //     if(!label) {
-          //     }
-          // }
-        }
+        await closeTask(task, options.cwd);
       });
     });
   });
@@ -81,3 +49,44 @@ export const copyGitMessage = (task: any) => {
 export const goToSettings = () => {
   vscode.commands.executeCommand('workbench.action.openSettings', 'shortcutViewer');
 };
+
+export const closeStory = async (task: any) => {
+  closeTask(task, vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.path : undefined);
+};
+
+async function closeTask(task: any, cwd: string | undefined) {
+  const packageJson = require(`${cwd}/package.json`);
+  const token: string = vscode.workspace.getConfiguration('shortcutViewer').get('token') || '';
+  const closedState: number | undefined = vscode.workspace.getConfiguration('shortcutViewer').get('closedStage');
+  if (closedState && token) {
+    const shortcurClient = new ShortcutClient(token);
+    await shortcurClient.updateStory(task.shortcutTask.id, {
+      workflow_state_id: closedState,
+    });
+    const packageField: string = vscode.workspace.getConfiguration('shortcutViewer').get('labelName') || 'name';
+    const version = packageJson.version;
+    const name = packageJson[packageField];
+    // await shortcurClient.createStoryComment(task.shortcutTask.id, {text: `Committed: ${commitUrl}`})
+    const story = await shortcurClient.getStory(task.shortcutTask.id);
+    let labels = (story.data.labels || []).concat([{ name: `${name}-${version}`, description: '' } as LabelSlim]);
+
+    const createLabels = labels.map((label) => {
+      return { name: label.name, color: label.color, description: label.description ?? undefined } as CreateLabelParams;
+    });
+
+    try {
+      await shortcurClient.updateStory(task.shortcutTask.id, {
+        labels: createLabels,
+      });
+    } catch (error) {
+      console.error('Error updating story:', error);
+    }
+    // Refresh the tree view
+    vscode.commands.executeCommand('shortcut-viewer.reloadShortcutTasks');
+    // shortcurClient.listLabels({slim:true}).then((result) => {
+    //     const label = result.data.find((label:any) => label.name === `${name}-${version}`);
+    //     if(!label) {
+    //     }
+    // }
+  }
+}
