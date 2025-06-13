@@ -12,19 +12,19 @@ export function activate(context: vscode.ExtensionContext) {
   const rootPath = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
 
   const token: string = vscode.workspace.getConfiguration('shortcutViewer').get('token') || '';
-  const workspaceId: string = vscode.workspace.getConfiguration('shortcutViewer').get('workspaceid');
+  const workspaceId: number | undefined = vscode.workspace.getConfiguration('shortcutViewer').get('workspaceid');
 
   console.log('Token:', token);
-  if(!token ) {
-   	vscode.window.showErrorMessage('Please provide a valid token');
-  	return;
+  if (!token) {
+    vscode.window.showErrorMessage('Please provide a valid token');
+    return;
   }
-  
-  if(!workspaceId) {
+
+  if (!workspaceId) {
     vscode.window.showErrorMessage('Please provide a valid workspace id');
-   	return;
+    return;
   }
-  
+
   const tasksProvider = new TasksProvider(token, workspaceId);
   vscode.window.registerTreeDataProvider('shortcut-tasks', tasksProvider);
 
